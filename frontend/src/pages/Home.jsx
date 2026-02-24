@@ -6,16 +6,13 @@ const Home = () => {
   const navigate = useNavigate()
   const fetchUser = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const response = await axios.get('http://localhost:3000/auth/home', {
-        headers: {
-          "Authorization" : `Bearer ${token}`
-        }
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/home`, {
+        withCredentials: true
       })
-      if(response.status !== 201) {
+      if (response.status !== 201) {
         navigate('/login')
       }
-    } catch(err){
+    } catch (err) {
       navigate('/login')
       console.log(err)
     }

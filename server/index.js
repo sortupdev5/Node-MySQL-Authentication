@@ -1,18 +1,28 @@
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import authRouter from './routes/authRoutes.js'
+import swaggerUi from 'swagger-ui-express'
+import swaggerSpec from './swaggerConfig.js'
 
 const app = express()
 app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true
 }))
+app.use(cookieParser())
 app.use(express.json())
-app.use('/auth', authRouter) 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use('/auth', authRouter)
 app.get('/', (req, res) => {
-    console.log("req.body")
+    res.send("Server is Running");
 })
 
-app.listen(process.env.PORT, () => {
-    console.log("Server is Running")
-})
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(process.env.PORT || 5001, () => {
+        console.log("Server is Running")
+    })
+}
+
+export default app
