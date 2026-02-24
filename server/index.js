@@ -7,9 +7,11 @@ import swaggerSpec from './swaggerConfig.js'
 
 const app = express()
 
+console.log("Allowed Frontend URL:", process.env.FRONTEND_URL);
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
-    methods: ["GET", "POST", "OPTIONS"],
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true
 }))
 
