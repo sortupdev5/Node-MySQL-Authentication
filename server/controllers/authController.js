@@ -47,12 +47,13 @@ export const login = async (req, res) => {
         const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_KEY, { expiresIn: '7d' })
 
         // Store Refresh Token in Database
-        await prisma.session.create({
+        const session = await prisma.session.create({
             data: {
                 refreshToken,
                 userId: user.id
             }
         })
+        console.log("Session created in database:", session.id);
 
         // Set Cookies
         res.cookie('accessToken', accessToken, {
@@ -69,7 +70,7 @@ export const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         })
 
-        return res.status(200).json({
+        return res.status(201).json({
             message: "Login Successful",
             user: { id: user.id, username: user.username, email: user.email }
         })
