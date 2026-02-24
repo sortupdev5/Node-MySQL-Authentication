@@ -5,9 +5,8 @@ import authRouter from './routes/authRoutes.js'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './swaggerConfig.js'
 
-console.log("CORS Origin set to:", process.env.FRONTEND_URL);
-
 const app = express()
+
 app.use(cors({
     origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "OPTIONS"],
