@@ -5,7 +5,7 @@ import authRouter from './routes/authRoutes.js'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './swaggerConfig.js'
 
-console.log("Allowed Frontend URL:", process.env.FRONTEND_URL);
+console.log("CORS Origin set to:", process.env.FRONTEND_URL);
 
 const app = express()
 app.use(cors({
@@ -13,6 +13,7 @@ app.use(cors({
     methods: ["GET", "POST", "OPTIONS"],
     credentials: true
 }))
+
 
 app.use(cookieParser())
 app.use(express.json())
