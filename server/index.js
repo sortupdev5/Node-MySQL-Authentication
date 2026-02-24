@@ -5,12 +5,15 @@ import authRouter from './routes/authRoutes.js'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './swaggerConfig.js'
 
+console.log("Allowed Frontend URL:", process.env.FRONTEND_URL);
+
 const app = express()
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    methods: ["GET", "POST"],
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST", "OPTIONS"],
     credentials: true
 }))
+
 app.use(cookieParser())
 app.use(express.json())
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
