@@ -39,19 +39,43 @@ export const login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ message: "wrong password" })
         }
-        const token = jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: '3h' })
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            maxAge: 3 * 60 * 60 * 1000 // 3 hours
+        // Generate Access Token (short-lived)
+        const accessToken = jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: '15m' })
+
+        // Generate Refresh Token (long-lived)
+        const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_KEY, { expiresIn: '7d' })
+
+        // Store Refresh Token in Database
+        await prisma.session.create({
+            data: {
+                refreshToken,
+                userId: user.id
+            }
         })
 
+        // Set Cookies
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true, // Should be true in production
+            sameSite: 'none',
+            maxAge: 15 * 60 * 1000 // 15 minutes
+        })
 
-        return res.status(201).json({ message: "Login Successful" })
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true, // Should be true in production
+            sameSite: 'none',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        })
+
+        return res.status(200).json({
+            message: "Login Successful",
+            user: { id: user.id, username: user.username, email: user.email }
+        })
     } catch (err) {
-        return res.status(500).json(err.message)
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error" })
     }
 }
 

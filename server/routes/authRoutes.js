@@ -91,14 +91,17 @@ router.post('/login', login)
 
 const verifyToken = async (req, res, next) => {
     try {
-        const token = req.cookies.token;
+        const token = req.cookies.accessToken; // Updated from 'token'
         if (!token) {
-            return res.status(403).json({ message: "No Token Provided" })
+            return res.status(401).json({ message: "No Token Provided" })
         }
         const decoded = jwt.verify(token, process.env.JWT_KEY)
         req.userId = decoded.id;
         next()
     } catch (err) {
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: "Access token expired" })
+        }
         return res.status(500).json({ message: "server error" })
     }
 }

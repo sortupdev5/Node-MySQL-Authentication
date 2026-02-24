@@ -14,11 +14,22 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   username   String
-  email      String   @unique
+  email      String    @unique
   password   String
-  created_at DateTime @default(now())
+  created_at DateTime  @default(now())
+  sessions   Session[]
 
   @@map("users")
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  refreshToken String   @unique @db.VarChar(500)
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+
+  @@map("sessions")
 }
