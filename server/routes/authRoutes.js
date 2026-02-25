@@ -91,7 +91,13 @@ router.post('/login', login)
 
 const verifyToken = async (req, res, next) => {
     try {
-        const token = req.cookies.accessToken; // Updated from 'token'
+        let token = req.cookies.accessToken;
+
+        // Support Authorization header (Bearer token) for Swagger and other clients
+        if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+
         if (!token) {
             return res.status(401).json({ message: "No Token Provided" })
         }

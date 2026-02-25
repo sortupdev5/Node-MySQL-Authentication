@@ -7,11 +7,26 @@ import swaggerSpec from './swaggerConfig.js'
 
 const app = express()
 
-console.log("Allowed Frontend URL:", process.env.FRONTEND_URL);
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    "https://node-my-sql-authentication-fa7v.vercel.app",
+    "https://node-my-sql-authentication.vercel.app",
+    "http://localhost:5173"
+].filter(Boolean);
 
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            console.log("Origin not allowed by CORS:", origin);
+            return callback(new Error('The CORS policy for this site does not ' +
+                'allow access from the specified Origin.'), false);
+        }
+        return callback(null, true);
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
 }))
 
