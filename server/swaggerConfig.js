@@ -1,5 +1,9 @@
 import path from 'path';
 import swaggerJsdoc from 'swagger-jsdoc';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const options = {
     definition: {
@@ -30,8 +34,8 @@ const options = {
         },
     },
     apis: [
-        path.join(process.cwd(), './routes/*.js'),
-        path.join(process.cwd(), './controllers/*.js')
+        path.join(__dirname, './routes/*.js'),
+        path.join(__dirname, './controllers/*.js')
     ], // Path to the API docs
 };
 
