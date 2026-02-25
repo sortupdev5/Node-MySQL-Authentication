@@ -13,6 +13,10 @@ const options = {
                 url: 'http://localhost:5001',
                 description: 'Development server',
             },
+            {
+                url: 'https://node-my-sql-authentication.vercel.app',
+                description: 'Vercel Production server',
+            }
         ],
         components: {
             securitySchemes: {

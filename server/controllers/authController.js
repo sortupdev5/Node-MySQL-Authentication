@@ -53,19 +53,18 @@ export const login = async (req, res) => {
                 userId: user.id
             }
         })
-        console.log("Session created in database:", session.id);
 
         // Set Cookies
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: true, // Should be true in production
+            secure: true, 
             sameSite: 'none',
             maxAge: 15 * 60 * 1000 // 15 minutes
         })
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true, // Should be true in production
+            secure: true, 
             sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         })
