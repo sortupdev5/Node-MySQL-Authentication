@@ -1,4 +1,4 @@
-import axios from 'axios'
+import api from '../api'
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -6,14 +6,14 @@ const Home = () => {
   const navigate = useNavigate()
   const fetchUser = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/home`, {
-        withCredentials: true
-      })
+      const response = await api.get('/auth/home')
       if (response.status !== 201) {
         navigate('/login')
       }
     } catch (err) {
-      navigate('/login')
+      if (err.response && err.response.status === 401) {
+        navigate('/login')
+      }
       console.log(err)
     }
   }

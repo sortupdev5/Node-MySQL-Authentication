@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api'
 
 const Login = () => {
     const [values, setValues] = useState({
@@ -15,9 +15,7 @@ const Login = () => {
     const handleSumbit = async (e) => {
         e.preventDefault()
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, values, {
-                withCredentials: true
-            })
+            const response = await api.post('/auth/login', values)
             if (response.status === 201) {
                 navigate('/')
             }

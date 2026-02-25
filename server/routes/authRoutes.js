@@ -1,8 +1,22 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import { register, login, getUser } from '../controllers/authController.js'
+import { register, login, getUser, refreshToken } from '../controllers/authController.js'
 
 const router = express.Router()
+
+/**
+ * @swagger
+ * /auth/refresh:
+ *   get:
+ *     summary: Refresh access token
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Token refreshed
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/refresh', refreshToken)
 
 /**
  * @swagger

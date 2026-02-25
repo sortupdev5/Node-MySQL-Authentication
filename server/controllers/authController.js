@@ -41,7 +41,7 @@ export const login = async (req, res) => {
         }
 
         // Generate Access Token (short-lived)
-        const accessToken = jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: '15m' })
+        const accessToken = jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: '15s' })
 
         // Generate Refresh Token (long-lived)
         const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_KEY, { expiresIn: '7d' })
@@ -57,14 +57,14 @@ export const login = async (req, res) => {
         // Set Cookies
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: true, 
+            secure: true,
             sameSite: 'none',
-            maxAge: 15 * 60 * 1000 // 15 minutes
+            maxAge: 15 * 1000 // 15 minutes
         })
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true, 
+            secure: true,
             sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         })
@@ -91,5 +91,44 @@ export const getUser = async (req, res) => {
         return res.status(201).json({ user: user })
     } catch (err) {
         return res.status(500).json({ message: "server error" })
+    }
+}
+export const refreshToken = async (req, res) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(401).json({ message: "No Refresh Token Provided" })
+        }
+
+        // Verify Refresh Token
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY)
+
+        // Check if session exists in database
+        const session = await prisma.session.findUnique({
+            where: { refreshToken }
+        })
+
+        if (!session) {
+            return res.status(401).json({ message: "Invalid Session" })
+        }
+
+        // Generate New Access Token
+        const accessToken = jwt.sign({ id: decoded.id }, process.env.JWT_KEY, { expiresIn: '15s' })
+
+        // Set New Access Token Cookie
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 15 * 1000 // 15 minutes
+        })
+
+        return res.status(200).json({ message: "Token Refreshed Successfully" })
+    } catch (err) {
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: "Refresh token expired" })
+        }
+        return res.status(500).json({ message: "internal server error" })
     }
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api'
 
 const Register = () => {
     const [values, setValues] = useState({
@@ -16,12 +16,12 @@ const Register = () => {
     const handleSumbit = async (e) => {
         e.preventDefault()
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, values)
+            const response = await api.post('/auth/register', values)
             if (response.status === 201) {
                 navigate('/login')
             }
         } catch (err) {
-            console.log(err.message)
+            console.log(err)
         }
     }
     return (
