@@ -121,7 +121,7 @@ export const refreshToken = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 15 * 1000 // 15 minutes
+            maxAge: 15 * 1000 // 15 seconds
         })
 
         return res.status(200).json({ message: "Token Refreshed Successfully" })
