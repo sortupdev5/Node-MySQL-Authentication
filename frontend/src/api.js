@@ -16,16 +16,15 @@ api.interceptors.response.use(
             error.response &&
             error.response.status === 401 &&
             (error.response.data.message === "Access token expired" || error.response.data.message === "No Token Provided") &&
-            !originalRequest._retry
+            !originalRequest._retry &&
+            !originalRequest.url.includes('/auth/refresh') // Prevent loop on refresh failure
         ) {
             console.log("Access token expired or missing. Attempting silent refresh...");
             originalRequest._retry = true;
 
             try {
-                // Call refresh endpoint to get a new accessToken cookie
-                const refreshResponse = await axios.get(`${import.meta.env.VITE_API_URL}/auth/refresh`, {
-                    withCredentials: true,
-                });
+                // Use the 'api' instance for consistency
+                const refreshResponse = await api.get('/auth/refresh');
                 console.log("Token refreshed successfully:", refreshResponse.data.message);
 
                 // Retry the original request
@@ -36,6 +35,11 @@ api.interceptors.response.use(
                 window.location.href = '/login';
                 return Promise.reject(refreshError);
             }
+        }
+
+        // Log unexpected 401s that didn't go through refresh
+        if (error.response && error.response.status === 401) {
+            console.warn("Unauthorized request (not refreshed):", error.response.data.message);
         }
 
         return Promise.reject(error);
