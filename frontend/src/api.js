@@ -17,29 +17,21 @@ api.interceptors.response.use(
             error.response.status === 401 &&
             (error.response.data.message === "Access token expired" || error.response.data.message === "No Token Provided") &&
             !originalRequest._retry &&
-            !originalRequest.url.includes('/auth/refresh') // Prevent loop on refresh failure
+            !originalRequest.url.includes('/auth/refresh')
         ) {
-            console.log("Access token expired or missing. Attempting silent refresh...");
             originalRequest._retry = true;
 
             try {
-                // Use the 'api' instance for consistency
-                const refreshResponse = await api.get('/auth/refresh');
-                console.log("Token refreshed successfully:", refreshResponse.data.message);
+                // Silent refresh call
+                await api.get('/auth/refresh');
 
-                // Retry the original request
+                // Retry original request
                 return api(originalRequest);
             } catch (refreshError) {
-                // If refresh fails (e.g., refreshToken also expired), redirect to login
-                console.error("Refresh failed or session expired. Redirecting to login...", refreshError.response?.data || refreshError.message);
+                console.error("Session expired. Please log in again.");
                 window.location.href = '/login';
                 return Promise.reject(refreshError);
             }
-        }
-
-        // Log unexpected 401s that didn't go through refresh
-        if (error.response && error.response.status === 401) {
-            console.warn("Unauthorized request (not refreshed):", error.response.data.message);
         }
 
         return Promise.reject(error);

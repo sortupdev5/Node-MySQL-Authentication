@@ -41,7 +41,7 @@ export const login = async (req, res) => {
         }
 
         // Generate Access Token (short-lived)
-        const accessToken = jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: '1m' })
+        const accessToken = jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: '15m' })
 
         // Generate Refresh Token (long-lived)
         const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_KEY, { expiresIn: '7d' })
@@ -59,7 +59,7 @@ export const login = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 60 * 1000 // 1 minute
+            maxAge: 15 * 60 * 1000 // 15 minutes
         })
 
         res.cookie('refreshToken', refreshToken, {
@@ -114,14 +114,14 @@ export const refreshToken = async (req, res) => {
         }
 
         // Generate New Access Token
-        const accessToken = jwt.sign({ id: decoded.id }, process.env.JWT_KEY, { expiresIn: '1m' })
+        const accessToken = jwt.sign({ id: decoded.id }, process.env.JWT_KEY, { expiresIn: '15m' })
 
         // Set New Access Token Cookie
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 60 * 1000 // 1 minute
+            maxAge: 15 * 60 * 1000 // 15 minutes
         })
 
         return res.status(200).json({ message: "Token Refreshed Successfully" })
