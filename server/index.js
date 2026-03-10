@@ -50,10 +50,11 @@ app.get('/', (req, res) => {
     res.send("Server is Running");
 })
 
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(process.env.PORT || 5001, () => {
-        console.log("Server is  Running")
-    })
-}
+const PORT = process.env.PORT || 5001;
+const HOST = '0.0.0.0'; // Listen on all interfaces
+
+app.listen(PORT, HOST, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 export default app
