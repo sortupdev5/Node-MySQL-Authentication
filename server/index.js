@@ -9,6 +9,7 @@ const app = express()
 
 const allowedOrigins = [
     process.env.FRONTEND_URL,
+    "http://16.170.211.97", // <-- add this
     "https://node-my-sql-authentication-fa7v.vercel.app",
     "https://node-my-sql-authentication.vercel.app",
     "http://localhost:5173"
