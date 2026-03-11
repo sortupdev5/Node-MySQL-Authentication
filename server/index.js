@@ -4,7 +4,8 @@ import cookieParser from 'cookie-parser'
 import authRouter from './routes/authRoutes.js'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './swaggerConfig.js'
-
+import dotenv from 'dotenv'
+dotenv.config();
 const app = express()
 
 const allowedOrigins = [
