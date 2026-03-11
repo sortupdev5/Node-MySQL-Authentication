@@ -52,7 +52,7 @@ app.get('/', (req, res) => {
     res.send("Server is Running");
 })
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 const HOST = '0.0.0.0'; // Listen on all interfaces
 
 app.listen(PORT, HOST, () => {
