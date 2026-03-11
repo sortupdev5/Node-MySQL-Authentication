@@ -15,8 +15,8 @@ const options = {
         },
         servers: [
             {
-                url: 'https://localhost:5001',
-                description: 'Development server',
+                url: 'https://node.sortup.dev/api-docs',
+                description: 'Production server',
             },
             {
                 url: 'https://node-my-sql-authentication.vercel.app',
