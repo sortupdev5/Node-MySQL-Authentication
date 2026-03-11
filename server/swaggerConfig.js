@@ -15,7 +15,7 @@ const options = {
         },
         servers: [
             {
-                url: 'https://node.sortup.dev/api-docs',
+                url: 'http://node.sortup.dev/api-docs',
                 description: 'Production server',
             },
             {
